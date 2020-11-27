@@ -45,6 +45,7 @@ public class LuseServiceCenter {
         return data;
     }
 
+    // make http request
     public static JSONObject makeHttpRequest(String url, String payload) {
         JSONObject parsedResponse = null;
         try {
@@ -66,7 +67,6 @@ public class LuseServiceCenter {
 
         return parsedResponse;
     }
-
 
     //    get securities list
     public static JSONArray getSecurityList(String securityType) {
@@ -123,21 +123,23 @@ public class LuseServiceCenter {
     }
 
     //    get client information
-    public static JSONArray clientInformation(String clientId) {
+    public static JSONArray clientInformation() {
         JSONArray dataCollectionArray = new JSONArray();
-        String url = "";
-        String payload = "{\"id\":\"" + clientId + "\",}";
+        String url = "/subscribers/find-one";
+        String clientId = "5f74872edb5f79151b3170c0";
+        String payload = "{\"id\":\"" + clientId + "\"}";
 
         JSONObject parsedResObj = makeHttpRequest(url, payload);
         JSONArray dataArray = (JSONArray) parsedResObj.get("payload");
+        System.out.println("parsed data ==> "+parsedResObj);
         System.out.println("client data ==> "+dataArray);
 
-        for (int i = 0; i < dataArray.size(); i++) {
-            JSONObject tempObj = new JSONObject();
-            JSONObject dataObj = (JSONObject) dataArray.get(i);
-            JSONObject brokerList = (JSONObject) dataObj.get("atsAccounts");
-        }
+//        for (int i = 0; i < dataArray.size(); i++) {
+//            JSONObject tempObj = new JSONObject();
+//            JSONObject dataObj = (JSONObject) dataArray.get(i);
+//            JSONObject brokerList = (JSONObject) dataObj.get("atsAccounts");
+//        }
 
-        return null;
+        return dataArray;
     }
 }

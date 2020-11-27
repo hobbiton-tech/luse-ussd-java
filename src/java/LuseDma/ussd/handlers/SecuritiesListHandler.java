@@ -150,14 +150,15 @@ public class SecuritiesListHandler {
                     switch (paginationHelper.getListPageActionHandle()) {
                         case 1:
                             selectedOption = getSelectedItem(Integer.parseInt(this.ussdsession.getUserInput()) - 1, buyOPtions);
-                            System.out.print("selected option ==> "+selectedOption);
+                            System.out.println("selected option ==> "+selectedOption);
                             JSONObject optionData = (JSONObject) selectedOption;
                             String optionId = (String)optionData.getOrDefault("id", "");
                             switch (optionId){
                                 case "1":
+                                    System.out.println("in option 1");
                                     this.ussdsession.saveSessionMode(1);
                                     this.ussdsession.saveUSSDSession(handlersessionlevel+7);
-                                    return getClientBrokers();
+                                    return this.getClientBrokers();
                             }
                     }
                     this.ussdsession.saveSessionMode(1);
@@ -173,10 +174,11 @@ public class SecuritiesListHandler {
     }
 
     public USSDResponse getClientBrokers() throws FileNotFoundException {
-        this.header = this.view.stockBuyProcess(this.securitySelected, "broker", false);
-        JSONArray clientInformation = LuseServiceCenter.clientInformation(this.securitySelected.getId());
-        this.listitems = this.getClientBrokerList(clientInformation);
-
+        System.out.println("get client brokers function ==> ");
+//        this.header = this.view.stockBuyProcess(this.securitySelected, "broker", false);
+        JSONArray clientInformation = LuseServiceCenter.clientInformation();
+        System.out.println("client info ==> "+clientInformation);
+//        this.listitems = this.getClientBrokerList(clientInformation);
         this.ussdsession.saveSessionMode(1);
         this.ussdsession.saveSessionMode(handlersessionlevel);
         return this.runSession();

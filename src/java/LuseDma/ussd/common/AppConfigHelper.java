@@ -72,7 +72,7 @@
    public static String MONGO_DATABASE = "luse_dma_ussd";
 
    public static String LUSEDMA_BASE_URL = "http://41.175.23.42:8484/api/v1";
-   public static String LUSEDMA_ACCESS_TOKEN = "zC4W4BBqJJvIN0qiKJjdvKPc6xFjfdDY7AwAbRqsRpqPSqtqmqOatmNR_9Yk6Vge6SvG80kcMVE95scD";
+   public static String LUSEDMA_ACCESS_TOKEN = "YFPpkmVyGYNB2BpObhv3lVPK9NRFzx2llae-Ei0n6rRS7SyE9lHSnZRHvcijzxZ1JFYIMFEvhjU5mZkh";
 
    public static String USSD_SESSIONS_COLLECTION = "ussd_sessions";
    public static String SUBSCRIBERS_COLLECTION = "subscribers";

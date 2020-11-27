@@ -133,7 +133,6 @@ public class SecurityExploreView {
 
     public String stockBuyProcess(Security security,String field,boolean isError){
         String view = "";
-
         view = view + "Stock:"+security.getName()+this.newLine;
         if(isError){
             view = view + "Invalid input entered" + this.newLine;
