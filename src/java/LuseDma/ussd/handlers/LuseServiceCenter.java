@@ -124,15 +124,16 @@ public class LuseServiceCenter {
 
     //    get client information
     public static JSONArray clientInformation() {
+        System.out.println("clientInformation function ==>");
         JSONArray dataCollectionArray = new JSONArray();
         String url = "/subscribers/find-one";
         String clientId = "5f74872edb5f79151b3170c0";
         String payload = "{\"id\":\"" + clientId + "\"}";
 
         JSONObject parsedResObj = makeHttpRequest(url, payload);
-        JSONArray dataArray = (JSONArray) parsedResObj.get("payload");
         System.out.println("parsed data ==> "+parsedResObj);
-        System.out.println("client data ==> "+dataArray);
+        JSONObject paylaodObj = (JSONObject) parsedResObj.get("payload");
+        System.out.println("client data ==> "+paylaodObj);
 
 //        for (int i = 0; i < dataArray.size(); i++) {
 //            JSONObject tempObj = new JSONObject();
@@ -140,6 +141,6 @@ public class LuseServiceCenter {
 //            JSONObject brokerList = (JSONObject) dataObj.get("atsAccounts");
 //        }
 
-        return dataArray;
+        return null;
     }
 }
