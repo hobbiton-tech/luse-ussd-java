@@ -18,7 +18,6 @@
    public USSDEngineCoreHandler(USSDSessionHelper object) { this.mUSSDSessionHelper = object; }
    
    public USSDResponse runUSSDSessionHandler(Integer session_level, Integer session_mode) {
-//     System.out.println("current view ==> "+this.mUSSDSessionHelper);
      switch (this.mUSSDSessionHelper.getSessionStatus()) {
        case 1:
          this.mUSSDSessionHelper.setUserInputHandle();

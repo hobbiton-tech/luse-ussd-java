@@ -11,9 +11,12 @@ public class SecuritiesMenuHandler {
 
     private final int handlersessionlevel = 0;
     private USSDSession ussdsession = null;
+    private String buyOrSell;
     private SecuritiesView view = new  SecuritiesView();
-    public SecuritiesMenuHandler(USSDSession ussdsession) {
+
+    public SecuritiesMenuHandler(USSDSession ussdsession, String buyOrSell) {
         this.ussdsession = ussdsession;
+        this.buyOrSell = buyOrSell;
     }
     public USSDResponse runSession() throws FileNotFoundException {
         switch (this.ussdsession.getSessionLevel()) {
@@ -29,13 +32,13 @@ public class SecuritiesMenuHandler {
         SecuritiesExploreHandler securitiesExploreHandler;
         switch (this.ussdsession.getSessionLevelOption(handlersessionlevel + 1)) {
             case 1:
-                securitiesExploreHandler = new SecuritiesExploreHandler(this.ussdsession, "CS");
+                securitiesExploreHandler = new SecuritiesExploreHandler(this.ussdsession, "CS", this.buyOrSell);
                 return securitiesExploreHandler.runSession();
             case 2:
-                securitiesExploreHandler = new SecuritiesExploreHandler(this.ussdsession, "CORP");
+                securitiesExploreHandler = new SecuritiesExploreHandler(this.ussdsession, "CORP", this.buyOrSell);
                 return securitiesExploreHandler.runSession();
             case 3:
-                securitiesExploreHandler = new SecuritiesExploreHandler(this.ussdsession, "CASH");
+                securitiesExploreHandler = new SecuritiesExploreHandler(this.ussdsession, "CASH", this.buyOrSell);
                 return securitiesExploreHandler.runSession();
 
         }

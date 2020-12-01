@@ -7,6 +7,11 @@ public class Security {
     private String atsId;
     private String securityType;
     private String securityCode;
+
+    public void setMsisdn(String msisdn) {
+        this.msisdn = msisdn;
+    }
+
     private String name;
     private String description;
     private String marketCap;
@@ -17,13 +22,19 @@ public class Security {
     private String symbol;
     private String currency;
     private String issueDate;
+
+    public String getMsisdn() {
+        return msisdn;
+    }
+
     private String maturityDate;
     private String couponRate;
+    private String msisdn;
 
     public Security() {
     }
 
-    public Security(String id, String csdId, String atsId, String securityType, String securityCode, String name, String description, String marketCap, String changeInPrice, String closingPrice, String settlementPrice, String openInterest, String symbol, String currency, String issueDate, String maturityDate, String couponRate) {
+    public Security(String id, String csdId, String atsId, String securityType, String securityCode, String name, String description, String marketCap, String changeInPrice, String closingPrice, String settlementPrice, String openInterest, String symbol, String currency, String issueDate, String maturityDate, String couponRate, String msisdn) {
         this.id = id;
         this.csdId = csdId;
         this.atsId = atsId;
@@ -41,6 +52,7 @@ public class Security {
         this.issueDate = issueDate;
         this.maturityDate = maturityDate;
         this.couponRate = couponRate;
+        this.msisdn = msisdn;
     }
 
     public String getId() {
@@ -183,6 +195,7 @@ public class Security {
     @Override
     public String toString() {
         return "Security{" +
+                "msisdn'="+msisdn+'\''+
                 "id='" + id + '\'' +
                 ", csdId='" + csdId + '\'' +
                 ", atsId='" + atsId + '\'' +

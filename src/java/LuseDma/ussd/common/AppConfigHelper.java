@@ -55,7 +55,7 @@
    public static String CONFIG_PATH;
    
    public static String LOG_PATH;
-   public static String APP_NAME = "Bumi Loans";
+   public static String APP_NAME = "LUSE";
    public static String SHORT_CODE = "*444#";
    public static String WEBSITE = "www.company.com";
    
@@ -72,7 +72,10 @@
    public static String MONGO_DATABASE = "luse_dma_ussd";
 
    public static String LUSEDMA_BASE_URL = "http://41.175.23.42:8484/api/v1";
-   public static String LUSEDMA_ACCESS_TOKEN = "YFPpkmVyGYNB2BpObhv3lVPK9NRFzx2llae-Ei0n6rRS7SyE9lHSnZRHvcijzxZ1JFYIMFEvhjU5mZkh";
+   public static  String LUSEDMA_WEBSOCKET_URL = "ws://41.175.23.42:8484/api/v1/websocket";
+   public static String SMS_GATEWAY_URL = "http://41.175.8.69:8282/mtnSMSC/index.php";
+   public static String LUSEDMA_ACCESS_TOKEN = "ZsTGOrFWmF0qyJ8Ehz85BtuUyTumXNehRcXbHPUda7HeBlKz0sEdbR4LypxNyOMTzYp74JC-vo8lqCVg";
+   public static String LUSE_CLIENT_ID = "5f7495f348678628a6b4d2c0";
 
    public static String USSD_SESSIONS_COLLECTION = "ussd_sessions";
    public static String SUBSCRIBERS_COLLECTION = "subscribers";

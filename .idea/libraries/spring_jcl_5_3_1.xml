@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="spring-jcl-5.3.1">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/dist/BumiLoansService/WEB-INF/lib/spring-jcl-5.3.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

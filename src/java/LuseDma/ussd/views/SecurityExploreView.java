@@ -4,8 +4,11 @@ import LuseDma.ussd.common.AppConfigHelper;
 import LuseDma.ussd.pojos.FormSession;
 import LuseDma.ussd.pojos.ListItem;
 import LuseDma.ussd.pojos.luse.Security;
+import LuseDma.ussd.pojos.luse.SecurityOrder;
 import org.json.JSONObject;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -13,6 +16,10 @@ public class SecurityExploreView {
 
     private String newLine = String.format("%n", new Object[0]);
     public static final String FORM_NAME = "security_form";
+    private static final double brokeragePercentageFee = 1/100;
+    private static final double lusePercentageFee = 0.375/100;
+    private static final double secPercentageFee = 0.125/100;
+
 
     public String getExploreOptionsMenu(boolean action, String security) {
 
@@ -63,24 +70,33 @@ public class SecurityExploreView {
         return view;
     }
 
-    public String getSecurityDetailsHeader(String securityType, Security security) {
+    public String getSecurityDetailsHeader(String securityType, Security security, boolean isError) {
         String view = "";
         String currency = AppConfigHelper.parseNull(security.getCurrency());
-        if(currency.equals("ZMK")){
+        if (isError) {
+            view = view + "Invalid option." + this.newLine;
+        }
+        if (currency.equals("ZMK")) {
             currency = "ZMW";
         }
         switch (securityType) {
             case "CS":
-                view = view + "Stock Details" + this.newLine;
-                view = view + "Name:" + AppConfigHelper.parseNull(security.getName())+this.newLine;
-                view = view + "Security code:" + AppConfigHelper.parseNull(security.getSecurityCode())+this.newLine;
-                view = view + "Price:" +currency+AppConfigHelper.parseNull(security.getClosingPrice())+this.newLine;
+                view = view + "Stock Market Details:" + this.newLine;
+                view = view + "Name:" + AppConfigHelper.parseNull(security.getName()) + this.newLine;
+                view = view + "code:" + AppConfigHelper.parseNull(security.getSecurityCode()) + this.newLine;
+                view = view + "Price:" + currency + AppConfigHelper.parseNull(security.getClosingPrice()) + this.newLine;
                 break;
             case "CORP":
-                view = view + "Bond Details:" + this.newLine;
+                view = view + "Bond Market Details:" + this.newLine;
+                view = view + "ISIN:" + AppConfigHelper.parseNull(security.getCsdId()) + this.newLine;
+                view = view + "Symbol:" + AppConfigHelper.parseNull(security.getSymbol()) + this.newLine;
+                view = view + "Price:" + currency + AppConfigHelper.parseNull(security.getClosingPrice()) + this.newLine;
                 break;
             case "CASH":
-                view = view + "Commodity Details:" + this.newLine;
+                view = view + "Commodity Market Details:" + this.newLine;
+                view = view + "code:" + AppConfigHelper.parseNull(security.getSecurityCode()) + this.newLine;
+                view = view + "Symbol:" + AppConfigHelper.parseNull(security.getSymbol()) + this.newLine;
+                view = view + "Price:" + currency + AppConfigHelper.parseNull(security.getClosingPrice()) + this.newLine;
                 break;
         }
         return view;
@@ -91,9 +107,9 @@ public class SecurityExploreView {
         ArrayList<ListItem> view = new ArrayList<>();
 
         var dateString = AppConfigHelper.parseNull(security.getIssueDate());
-        var issueDate = dateString.substring(0,4)+"-"+dateString.substring(4,6)+"-"+dateString.substring(6,8);
+        var issueDate = dateString.substring(0, 4) + "-" + dateString.substring(4, 6) + "-" + dateString.substring(6, 8);
         var dateString2 = AppConfigHelper.parseNull(security.getMaturityDate());
-        var maturityDate = dateString2.substring(0,4)+"-"+dateString2.substring(4,6)+"-"+dateString2.substring(6,8);
+        var maturityDate = dateString2.substring(0, 4) + "-" + dateString2.substring(4, 6) + "-" + dateString2.substring(6, 8);
 
         if (security.getSecurityType().equals("CS")) {
             item = new ListItem("name", AppConfigHelper.parseNull(security.getName()));
@@ -120,7 +136,7 @@ public class SecurityExploreView {
             view.add(item);
         }
 
-        item = new ListItem("price", AppConfigHelper.parseNull(security.getCurrency())+AppConfigHelper.parseNull(security.getClosingPrice()));
+        item = new ListItem("price", AppConfigHelper.parseNull(security.getCurrency()) + AppConfigHelper.parseNull(security.getClosingPrice()));
         view.add(item);
         item = new ListItem("symbol", AppConfigHelper.parseNull(security.getSymbol()));
         view.add(item);
@@ -131,34 +147,139 @@ public class SecurityExploreView {
         return view;
     }
 
-    public String stockBuyProcess(Security security,String field,boolean isError){
+    public String stockBuyProcess(Security security, String field, boolean isError) {
         String view = "";
-        view = view + "Stock:"+security.getName()+this.newLine;
-        if(isError){
+        view = view + "Stock:" + security.getName() + this.newLine;
+        if (isError) {
             view = view + "Invalid input entered" + this.newLine;
         }
-        switch(field){
+        switch (field) {
             case "broker":
-                view = view + "Select your broker"+this.newLine;
+                view = view + "Select your broker" + this.newLine;
                 break;
             case "shares":
-                view = view+ "Enter number of shares"+this.newLine;
+                view = view + "Enter number of shares" + this.newLine;
                 break;
             case "price":
-                view = view + "Enter price per share"+this.newLine;
+                view = view + "Enter price per share" + this.newLine;
                 break;
         }
-        view = view + "Enter price ";
-
         return view;
     }
 
-    private boolean isStockPriceEnteredValid(double orgPrice, double enteredPrice){
+    private boolean isStockPriceEnteredValid(double orgPrice, double enteredPrice) {
         double percentRate = 0.25 * orgPrice;
-        if((-1*percentRate)<=enteredPrice && (enteredPrice<=orgPrice)){
+        if ((-1 * percentRate) <= enteredPrice && (enteredPrice <= orgPrice)) {
             return true;
         }
         return false;
+    }
+
+    public String getSecurityVolume(String securityType, Security security, boolean isError) {
+        String view = "";
+        if (isError) {
+            view = view + "Invalid input entered" + this.newLine;
+        }
+        switch (securityType) {
+            case "CS":
+                view = view + "Stock:" + security.getName() + this.newLine;
+                view = view + "Enter number of shares" + this.newLine;
+                break;
+            case "CORP":
+                view = view + "Enter bond tonnage" + this.newLine;
+                break;
+            case "CASH":
+                view = view + "Enter commodity volume" + this.newLine;
+                break;
+        }
+        return view;
+    }
+
+    public String securityPrice(String securityType, Security security, boolean isError, boolean isCriteria, String criteriaMsg) {
+        String view = "";
+        if (isError) {
+            view = view + "Invalid input entered" + this.newLine;
+        }
+        if (isCriteria) {
+            view = view + "Invalid input."+criteriaMsg+this.newLine;
+        }
+        switch (securityType) {
+            case "CS":
+                view = view + "Stock:" + security.getName() + this.newLine;
+                view = view + "Enter price per share" + this.newLine;
+                break;
+            case "CORP":
+                view = view + "Enter price per tonnage" + this.newLine;
+                break;
+            case "CASH":
+                view = view + "Enter price per volume" + this.newLine;
+                break;
+        }
+        return view;
+    }
+
+    public String confirmOrder(String securityType, Security security, SecurityOrder order, boolean isError) {
+        String view = "";
+        String totalCost = String.valueOf(Double.parseDouble(AppConfigHelper.parseNull(security.getClosingPrice())) + lusePercentageFee+brokeragePercentageFee+secPercentageFee);
+        String currency = AppConfigHelper.parseNull(security.getCurrency());
+        DecimalFormat df = new DecimalFormat("###.##");
+        df.setRoundingMode(RoundingMode.CEILING);
+        if (isError) {
+            view = view + "Invalid option." + this.newLine;
+        }
+        if (currency.equals("ZMK")) {
+            currency = "ZMW";
+        }
+        switch (securityType) {
+            case "CS":
+                view = view + "Stock:" + security.getName() + this.newLine;
+                view = view + "Shares: " + order.getVolume() + this.newLine;
+                view = view + "Price per share: " + order.getPrice() + this.newLine;
+                view = view + "Total Cost:"+currency  + totalCost+this.newLine;
+                break;
+            case "CORP":
+                view = view + "Bond:"+security.getCsdId()+ this.newLine;
+                view = view + "Tonnage:"+order.getVolume()+this.newLine;
+                view = view + "Price per tonnage:"+order.getPrice()+this.newLine;
+                view = view + "Total Cost:"+currency  + totalCost+this.newLine;
+                break;
+            case "CASH":
+                view = view + "Commodity:"+security.getSecurityCode()+ this.newLine;
+                view = view + "Volume:"+order.getVolume()+this.newLine;
+                view = view + "Price per volume:"+order.getPrice()+this.newLine;
+                view = view + "Total Cost:"+currency  + totalCost+this.newLine;
+                break;
+        }
+        return view;
+    }
+
+    public String securityOrderResponse() {
+        String view ="";
+        view = view + "Your order is being processed you will receive an sms response soon." + this.newLine;
+        return view;
+    }
+
+    public String bondCalculator(){
+        String view ="";
+        view = view + "Calculate bond price by:"+this.newLine;
+        return view;
+    }
+
+    public String bondsOptionInputView(Security security, String action, boolean isError){
+        String view = "";
+        view = view + "Bond:"+security.getCsdId()+this.newLine;
+        if (isError) {
+            view = view + "Invalid input entered" + this.newLine;
+        }
+        switch(action){
+            case "yield":
+                view = view + "Enter yield value"+this.newLine;
+                break;
+            case "price":
+                view = view + "Enter price"+this.newLine;
+                break;
+        }
+        return view;
     }
 
 }

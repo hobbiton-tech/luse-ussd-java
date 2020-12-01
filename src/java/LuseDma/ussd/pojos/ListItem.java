@@ -25,6 +25,16 @@
    public String getItemName() { return this._itemname; }
    
    public void getId(ObjectId value) { this.id = value; }
-   public void setItemID(String value) { this._itemid = value; }
+
+     @Override
+     public String toString() {
+         return "ListItem{" +
+                 "id=" + id +
+                 ", _itemid='" + _itemid + '\'' +
+                 ", _itemname='" + _itemname + '\'' +
+                 '}';
+     }
+
+     public void setItemID(String value) { this._itemid = value; }
    public void setItemName(String value) { this._itemname = value; }
  }

@@ -12,11 +12,15 @@ public class SecuritiesExploreHandler {
     private final int handlersessionlevel = 1;
     private USSDSession ussdsession = null;
     private String security;
-    private SecurityExploreView view = new  SecurityExploreView();
-    public SecuritiesExploreHandler(USSDSession ussdsession, String security) {
+    private String buyOrSell;
+    private SecurityExploreView view = new SecurityExploreView();
+
+    public SecuritiesExploreHandler(USSDSession ussdsession, String security, String buyOrSell) {
         this.ussdsession = ussdsession;
         this.security = security;
+        this.buyOrSell = buyOrSell;
     }
+
     public USSDResponse runSession() throws FileNotFoundException {
         switch (this.ussdsession.getSessionLevel()) {
             case handlersessionlevel:
@@ -30,12 +34,17 @@ public class SecuritiesExploreHandler {
     public USSDResponse runOptionSelectedHandler() throws FileNotFoundException {
         AccountViewerHandler accountViewerHandler;
         SecuritiesListHandler securitiesListHandler;
+
+        if(this.ussdsession.getUserInput().matches("[a-zA-z]+")){
+            securitiesListHandler = new SecuritiesListHandler(this.ussdsession, this.security, String.valueOf(this.ussdsession.getUserInput()).toUpperCase(), this.buyOrSell);
+            return securitiesListHandler.runSession();
+        }
+
         switch (this.ussdsession.getSessionLevelOption(handlersessionlevel + 1)) {
             case 1:
-                this.ussdsession.saveUSSDSession(handlersessionlevel + 2);
-                return this.ussdsession.buildUSSDResponse(this.view.getSearchMenu(false, this.security),2);
+                return this.ussdsession.buildUSSDResponse(this.view.getSearchMenu(false, this.security), 2);
             case 2:
-                securitiesListHandler = new SecuritiesListHandler(this.ussdsession, this.security);
+                securitiesListHandler = new SecuritiesListHandler(this.ussdsession, this.security, "", this.buyOrSell);
                 return securitiesListHandler.runSession();
         }
         return this.ussdsession.buildUSSDResponse(this.view.getExploreOptionsMenu(true, this.security), 2);
