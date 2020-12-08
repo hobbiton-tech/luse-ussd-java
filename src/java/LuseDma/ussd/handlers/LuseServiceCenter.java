@@ -33,8 +33,8 @@ public class LuseServiceCenter {
                     .header("Content-Type", "application/json")
                     .POST(HttpRequest.BodyPublishers.noBody())
                     .build();
-            var client = HttpClient.newHttpClient();
-            var response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            HttpClient client = HttpClient.newHttpClient();
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             System.out.println("result ==>" + response.body());
             JSONParser parse = new JSONParser();
             JSONObject resObj = (JSONObject) parse.parse(response.body());
@@ -70,8 +70,8 @@ public class LuseServiceCenter {
                     .header("Authorization", "Bearer " + AppConfigHelper.LUSEDMA_ACCESS_TOKEN)
                     .POST(HttpRequest.BodyPublishers.ofString(payload))
                     .build();
-            var client = HttpClient.newHttpClient();
-            var response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            HttpClient client = HttpClient.newHttpClient();
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             JSONParser parse = new JSONParser();
             parsedResponse = (JSONObject) parse.parse(response.body());
 
@@ -95,7 +95,8 @@ public class LuseServiceCenter {
 
         System.out.println("filter value ==> "+securityFilter);
 
-        if(securityFilter != null){
+        if(securityFilter != ""){
+            System.out.println("security filter not null");
             for (int i = 0; i < dataArray.size(); i++){
                 JSONObject dataObj = (JSONObject) dataArray.get(i);
 
@@ -103,24 +104,28 @@ public class LuseServiceCenter {
                 String securityCodeFilter = dataObj.getOrDefault("securityCode", "").toString();
                 String secuirtyCsdId = dataObj.getOrDefault("csdId", "").toString();
 
-                if(securityTypeFilter.equals("CORP")){
-                    if(secuirtyCsdId.startsWith(securityFilter)){
-                        dataArrayFilter.add(i, dataObj);
-                    }
-                }
-//                System.out.println("security code ==> "+securityCodeFilter);
-//                System.out.println("search value prefix ==> "+securityFilter);
-//                System.out.println("search result status ==> "+ securityCodeFilter.startsWith(securityFilter));
-
-                if(securityCodeFilter.startsWith(securityFilter)){
-//                    System.out.println("adding object");
-                    dataArrayFilter.add(dataObj);
+                switch(securityTypeFilter){
+                    case "CORP":
+                        if(secuirtyCsdId.startsWith(securityFilter)){
+                            dataArrayFilter.add(dataObj);
+                        }
+                        break;
+                    default:
+                        if(securityCodeFilter.startsWith(securityFilter)){
+                            dataArrayFilter.add(dataObj);
+                        }
+                        break;
                 }
             }
             finalDataArray = dataArrayFilter;
         }
+        else{
+            finalDataArray = dataArray;
+        }
+
 
         System.out.println("filtered array ==> "+dataArrayFilter);
+        System.out.println("final data array ==> "+finalDataArray);
 
         for (int i = 0; i < finalDataArray.size(); i++) {
             JSONObject tempObj = new JSONObject();
@@ -248,7 +253,7 @@ public class LuseServiceCenter {
         client.setAtsAccountsBrokerId(atsAccountsObjIndex0.getOrDefault("brokerId", "").toString());
         client.setMsisdn(msisdn);
 
-        var result = clientModel.save(client);
+        Boolean result = clientModel.save(client);
         System.out.println("user save status ==> " + result);
     }
 
@@ -296,6 +301,31 @@ public class LuseServiceCenter {
         System.out.println("payload recieved==> " + payload);
         SockJsSpringClient client = new SockJsSpringClient();
         client.connectWebsocket("fundAccount", payload, mongodb, msisdn);
+    }
+
+    //get portfolio
+    public static JSONArray getClientPorfolio(String subscriberId, String csdId) {
+        JSONArray dataCollectionArray = new JSONArray();
+        String url = "/subscribers/holdings";
+        String payload = "{\"subscriberId\":\""+subscriberId+"\", \"csdId\":\"" + csdId + "\"}";
+
+        JSONObject parsedResObj = makeHttpRequest(url, payload, "");
+        JSONArray dataArray = (JSONArray) parsedResObj.get("payload");
+
+
+        for (int i = 0; i < dataArray.size(); i++) {
+            JSONObject tempObj = new JSONObject();
+            JSONObject dataObj = (JSONObject) dataArray.get(i);
+
+            tempObj.put("csdId", dataObj.getOrDefault("csdId", ""));
+            tempObj.put("securityCode", dataObj.getOrDefault("securityCode", ""));
+            tempObj.put("securityName", dataObj.getOrDefault("securityName", ""));
+            tempObj.put("shortLongIndicator", dataObj.getOrDefault("shortLongIndicator", ""));
+            tempObj.put("holdingsBalance", dataObj.getOrDefault("holdingsBalance", ""));
+            tempObj.put("availableBalance", dataObj.getOrDefault("availableBalance", ""));
+            dataCollectionArray.add(tempObj);
+        }
+        return dataCollectionArray;
     }
 
 }

@@ -26,7 +26,7 @@ public class BrokerModel extends MongoModelOld {
 
     public Boolean save(Broker broker) {
         try {
-            var result = this.findOne(broker.getAtsId());
+            Broker result = this.findOne(broker.getAtsId());
             if(result == null){
                 this.collection.save(broker);
             }

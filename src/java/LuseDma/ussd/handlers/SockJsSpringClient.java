@@ -61,6 +61,8 @@ public class SockJsSpringClient {
             else{
                 Thread.sleep(10000);
             }
+            System.out.println("closing websocket");
+            stompClient.stop();
         } catch (Exception e) {
             System.out.println("error ==> " + e.getMessage());
         }

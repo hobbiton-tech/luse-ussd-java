@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="org.apache.servicemix.bundles.spring-websocket-4.1.9.RELEASE_1">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/dist/BumiLoansService/WEB-INF/lib/org.apache.servicemix.bundles.spring-websocket-4.1.9.RELEASE_1.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>

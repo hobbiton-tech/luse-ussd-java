@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="jackson-annotations-2.9.5">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/../LuseDmaUSSD/dist/BumiLoansService/WEB-INF/lib/jackson-annotations-2.9.5.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>

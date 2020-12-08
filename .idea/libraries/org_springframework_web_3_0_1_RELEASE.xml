@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="org.springframework.web-3.0.1.RELEASE">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/dist/BumiLoansService/WEB-INF/lib/org.springframework.web-3.0.1.RELEASE.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>

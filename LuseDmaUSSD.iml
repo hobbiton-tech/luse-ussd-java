@@ -38,36 +38,34 @@
     <orderEntry type="library" name="org.apache.httpcomponents.httpcore_4.2.1" level="project" />
     <orderEntry type="library" name="httpclient-4.0" level="project" />
     <orderEntry type="library" name="json-simple-1.1" level="project" />
-    <orderEntry type="library" name="spring-beans-5.2.8.RELEASE" level="project" />
-    <orderEntry type="library" name="spring-core-5.2.8.RELEASE" level="project" />
-    <orderEntry type="library" name="spring-jcl-5.2.8.RELEASE" level="project" />
-    <orderEntry type="library" name="spring-messaging-5.2.8.RELEASE" level="project" />
-    <orderEntry type="library" name="org.springframework.web-3.0.1.RELEASE" level="project" />
-    <orderEntry type="library" name="org.apache.servicemix.bundles.spring-websocket-4.1.9.RELEASE_1" level="project" />
     <orderEntry type="library" name="spring-aop-5.3.1" level="project" />
-    <orderEntry type="library" name="spring-beans-5.3.1" level="project" />
     <orderEntry type="library" name="spring-context-5.3.1" level="project" />
     <orderEntry type="library" name="spring-core-5.3.1" level="project" />
     <orderEntry type="library" name="spring-expression-5.3.1" level="project" />
     <orderEntry type="library" name="spring-jcl-5.3.1" level="project" />
     <orderEntry type="library" name="spring-web-5.3.1" level="project" />
     <orderEntry type="library" name="spring-websocket-5.3.1" level="project" />
-    <orderEntry type="library" name="aopalliance-1.0" level="project" />
     <orderEntry type="library" name="commons-logging-1.2" level="project" />
-    <orderEntry type="library" name="spring-aop-4.1.9.RELEASE" level="project" />
-    <orderEntry type="library" name="spring-beans-4.1.9.RELEASE" level="project" />
-    <orderEntry type="library" name="spring-context-4.1.9.RELEASE" level="project" />
-    <orderEntry type="library" name="spring-core-4.1.9.RELEASE" level="project" />
-    <orderEntry type="library" name="spring-expression-4.1.9.RELEASE" level="project" />
-    <orderEntry type="library" name="spring-web-4.1.9.RELEASE" level="project" />
-    <orderEntry type="library" name="spring-websocket-4.1.9.RELEASE" level="project" />
-    <orderEntry type="library" name="javax.websocket-client-api-1.0-b13" level="project" />
     <orderEntry type="library" name="jakarta.websocket-client-api-2.0.0.Final" level="project" />
-    <orderEntry type="library" name="tyrus-standalone-client-2.0.0-M3" level="project" />
     <orderEntry type="library" name="javax.websocket-api-1.0-sources" level="project" />
-    <orderEntry type="library" name="spring-messaging-4.0.0.RELEASE" level="project" />
     <orderEntry type="library" name="spring-messaging-5.1.19.RELEASE" level="project" />
     <orderEntry type="library" name="tyrus-standalone-client-1.9" level="project" />
     <orderEntry type="library" name="java-promise-1.1.0" level="project" />
+    <orderEntry type="library" name="httpclient-4.0 (2)" level="project" />
+    <orderEntry type="library" name="jakarta.websocket-client-api-2.0.0.Final (2)" level="project" />
+    <orderEntry type="library" name="java-promise-1.1.0 (2)" level="project" />
+    <orderEntry type="library" name="javax.xml.bind (2)" level="project" />
+    <orderEntry type="library" name="json-simple-1.1 (2)" level="project" />
+    <orderEntry type="library" name="org.apache.httpcomponents.httpcore_4.2.1 (2)" level="project" />
+    <orderEntry type="library" name="servlet-api (2)" level="project" />
+    <orderEntry type="library" name="spring-aop-5.3.1 (2)" level="project" />
+    <orderEntry type="library" name="spring-context-5.3.1 (2)" level="project" />
+    <orderEntry type="library" name="spring-core-5.3.1 (2)" level="project" />
+    <orderEntry type="library" name="spring-expression-5.3.1 (2)" level="project" />
+    <orderEntry type="library" name="spring-jcl-5.3.1 (2)" level="project" />
+    <orderEntry type="library" name="spring-messaging-5.1.19.RELEASE (2)" level="project" />
+    <orderEntry type="library" name="spring-web-5.3.1 (2)" level="project" />
+    <orderEntry type="library" name="spring-websocket-5.3.1 (2)" level="project" />
+    <orderEntry type="library" name="tyrus-standalone-client-1.9 (2)" level="project" />
   </component>
 </module>

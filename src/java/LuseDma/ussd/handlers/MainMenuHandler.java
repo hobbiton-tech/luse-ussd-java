@@ -15,6 +15,7 @@ public class MainMenuHandler {
     private LuseMianViews view = new LuseMianViews();
 
     public MainMenuHandler(USSDSession ussdsession) {
+//        System.out.println("menu session ==>");
         this.ussdsession = ussdsession;
         this.mobilesession = ussdsession.getMobileSession();
         LuseServiceCenter.saveClient(this.ussdsession.getUSSDSessionHelper().getMongoDB(), this.mobilesession.getMSISDN(), AppConfigHelper.LUSE_CLIENT_ID);
@@ -31,9 +32,9 @@ public class MainMenuHandler {
     }
 
     public USSDResponse runOptionSelectedHandler() throws FileNotFoundException {
-        RegistrationHandler registrationHandler;
         SecuritiesMenuHandler securitiesMenuHandler;
         FundMenuHandler fundMenuHandler;
+        PortfolioHandler portfolioHandler;
         switch (this.ussdsession.getSessionLevelOption(handlersessionlevel + 1)) {
             case 1:
                 securitiesMenuHandler = new SecuritiesMenuHandler(this.ussdsession, "1");
@@ -44,6 +45,10 @@ public class MainMenuHandler {
             case 3:
                 fundMenuHandler = new FundMenuHandler(this.ussdsession);
                 return fundMenuHandler.runSession();
+            case 4:
+                portfolioHandler = new PortfolioHandler(this.ussdsession);
+                return portfolioHandler.runSession();
+
         }
         return this.ussdsession.buildUSSDResponse(this.view.getMainMenuView(this.ussdsession, true), 2);
     }

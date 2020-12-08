@@ -1,7 +1,47 @@
 <component name="libraryTable">
   <library name="commons-math3-3.2">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/../LuseDmaUSSD/dist/BumiLoansService/WEB-INF/lib/commons-math3-3.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../LuseDmaJarFiles/commons-math3-3.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../LuseDmaJarFiles/commons-logging-1.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../LuseDmaJarFiles/commons-lang-2.6.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../LuseDmaJarFiles/commons-codec-1.6.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../LuseDmaJarFiles/bson4jackson-2.9.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../LuseDmaJarFiles/dev.morphia.morphia-1.5.8.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../LuseDmaJarFiles/jackson-annotations-2.9.5.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../LuseDmaJarFiles/gson-2.2.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../LuseDmaJarFiles/httpclient-4.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../LuseDmaJarFiles/jackson-core-2.9.5.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../LuseDmaJarFiles/jackson-databind-2.9.5.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../LuseDmaJarFiles/jackson-jaxrs-base-2.2.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../LuseDmaJarFiles/jackson-jaxrs-json-provider-2.9.5.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../LuseDmaJarFiles/jakarta.websocket-client-api-2.0.0.Final.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../LuseDmaJarFiles/java-promise-1.1.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../LuseDmaJarFiles/javax.xml.bind.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../LuseDmaJarFiles/joda-time-2.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../LuseDmaJarFiles/jongo-1.3.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../LuseDmaJarFiles/json-20090211.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../LuseDmaJarFiles/json-simple-1.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../LuseDmaJarFiles/log4j-1.2.16.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../LuseDmaJarFiles/mongo-java-driver-3.4.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../LuseDmaJarFiles/mongo-java-driver-3.12.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../LuseDmaJarFiles/mongodb-driver-3.4.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../LuseDmaJarFiles/mongodb-driver-core-3.4.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../LuseDmaJarFiles/okhttp-3.10.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../LuseDmaJarFiles/okio-1.14.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../LuseDmaJarFiles/org.apache.httpcomponents.httpcore_4.2.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../LuseDmaJarFiles/servlet-api.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../LuseDmaJarFiles/spring-aop-5.3.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../LuseDmaJarFiles/spring-context-5.3.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../LuseDmaJarFiles/spring-core-5.3.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../LuseDmaJarFiles/spring-expression-5.3.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../LuseDmaJarFiles/spring-jcl-5.3.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../LuseDmaJarFiles/spring-messaging-5.1.19.RELEASE.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../LuseDmaJarFiles/spring-web-5.3.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../LuseDmaJarFiles/spring-websocket-5.3.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../LuseDmaJarFiles/tyrus-standalone-client-1.9.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../LuseDmaJarFiles/ws-commons-util-1.0.2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../LuseDmaJarFiles/xmlrpc-2.0.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../LuseDmaJarFiles/xmlrpc-common-3.1.3.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="dev.morphia.morphia-1.5.8">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/../LuseDmaUSSD/dist/BumiLoansService/WEB-INF/lib/dev.morphia.morphia-1.5.8.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>

@@ -52,8 +52,9 @@ public class WebsocketSessionHandler extends StompSessionHandlerAdapter {
         SocketResponse response = json.fromJson(received, SocketResponse.class);
 
         switch (response.getCode()){
-            case "99", "8", "0":
+            case "99": case "8": case "0":
                 LuseServiceCenter.sendSMS(this.msisdn, response.getMessage());
+                break;
         }
 
     }
@@ -103,11 +104,4 @@ public class WebsocketSessionHandler extends StompSessionHandlerAdapter {
         System.out.println("Sent to '/live/wallets/deposit' => " + payload);
     }
 
-    public void setRequestResponse(String jsonObject){
-        this.requestResponse = jsonObject;
-    }
-
-    public String getRequestResponse(){
-        return this.requestResponse;
-    }
 }

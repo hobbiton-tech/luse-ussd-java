@@ -74,6 +74,9 @@ public class SecuritiesListHandler {
                     switch (paginationHelper.getListPageActionHandle()) {
                         case 1:
                             this.selected = getSelectedItem(Integer.parseInt(this.ussdsession.getUserInput()) - 1, securityList);
+
+                            System.out.println("selected security ==> "+this.selected);
+
                             this.setSecurityFormParametersAndSave();
 
                             this.ussdsession.resetList();
@@ -177,8 +180,8 @@ public class SecuritiesListHandler {
                 this.ussdsession.saveUSSDSession(handlersessionlevel + 7);
                 return this.ussdsession.buildUSSDResponse(this.view.getSecurityVolume(this.securityType, this.securitySelected, false), 2);
             case handlersessionlevel + 7:
-                var volumeEntered = this.ussdsession.getUserInput();
-                var isValidInput = this.validateInput("number", volumeEntered);
+                String volumeEntered = this.ussdsession.getUserInput();
+                Boolean isValidInput = this.validateInput("number", volumeEntered);
                 if (isValidInput) {
                     this.addFieldtoBuyFormAndSave("volume", volumeEntered);
                     this.ussdsession.saveSessionMode(1);
@@ -203,8 +206,8 @@ public class SecuritiesListHandler {
                     return this.ussdsession.buildUSSDResponse(this.view.securityPrice(this.securityType, this.securitySelected, false, false, ""), 2);
                 case handlersessionlevel + 9:
                     this.ussdsession.saveSessionMode(1);
-                    var priceEntered = this.ussdsession.getUserInput();
-                    var isValidInput = this.validateInput("number", priceEntered);
+                    String priceEntered = this.ussdsession.getUserInput();
+                    Boolean isValidInput = this.validateInput("number", priceEntered);
                     if (isValidInput) {
                         switch (this.securityType) {
                             case "CS":

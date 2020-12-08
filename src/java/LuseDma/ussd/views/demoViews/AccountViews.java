@@ -66,9 +66,10 @@ import LuseDma.ussd.pojos.Account;
          }
          return view;
    }
-   public ArrayList<ListItem> getSubscriberDetailsView(Subscriber subscriber) {
-     ListItem item;
-     ArrayList<ListItem> view = new ArrayList<>();
+
+     public ArrayList<ListItem> getSubscriberDetailsView(Subscriber subscriber) {
+         ListItem item;
+         ArrayList<ListItem> view = new ArrayList<>();
          item = new ListItem("ID", AppConfigHelper.parseNull(subscriber.getIdnumber()));
          view.add(item);
          item = new ListItem("Type", AppConfigHelper.parseNull(subscriber.getPersonalDetails().getIdType()));

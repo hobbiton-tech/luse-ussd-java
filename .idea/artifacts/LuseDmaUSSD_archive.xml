@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" build-on-make="true" name="LuseDmaUSSD archive">
+    <output-path>$PROJECT_DIR$/out/artifacts/LuseDmaUSSD_archive</output-path>
+    <root id="archive" name="LuseDmaUSSD.war">
+      <element id="artifact" artifact-name="LuseDmaUSSD" />
+    </root>
+  </artifact>
+</component>

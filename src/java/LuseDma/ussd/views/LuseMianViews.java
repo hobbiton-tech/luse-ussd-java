@@ -16,7 +16,7 @@ public class LuseMianViews
         view = view + "2. Sell" + this.newLine;
         view = view + "3. Fund" + this.newLine;
         view = view + "4. Portfolio" + this.newLine;
-        view = view + "5. Manage Account" + this.newLine;
+//        view = view + "5. Manage Account" + this.newLine;
         return view;
     }
 

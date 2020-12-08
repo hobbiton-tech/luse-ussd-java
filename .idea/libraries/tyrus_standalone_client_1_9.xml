@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="tyrus-standalone-client-1.9">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/dist/BumiLoansService/WEB-INF/lib/tyrus-standalone-client-1.9.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>

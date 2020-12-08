@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="javax.websocket-client-api-1.0-b13">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/dist/BumiLoansService/WEB-INF/lib/javax.websocket-client-api-1.0-b13.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>

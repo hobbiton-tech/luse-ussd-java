@@ -18,14 +18,11 @@ public class WIFIUSSDTester {
     private static String SessionID = "115";
     private static String AppID = "677";
     private static String Shortcode = "677";
-    private static String SessionStatus = "2";
+    private static String SessionStatus = "1";
     private static String MSISDN = "260975608340";//260966220499//260966220082 //260963621441
-    private static String USSDString = "*677*##";//111254597//11114982
-
-
+    private static String USSDString = "*677#";//111254597//11114982
 
     public static void main(String[] args) {
-        // System.out.println(AppConfigHelper.getCurrentYear() +1);
         AppConfigHelper config = new AppConfigHelper();
         MongoDBOld mongodb = new MongoDBOld();
         try {
