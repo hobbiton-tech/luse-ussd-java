@@ -19,8 +19,9 @@ public class WIFIUSSDTester {
     private static String AppID = "677";
     private static String Shortcode = "677";
     private static String SessionStatus = "1";
-    private static String MSISDN = "260975608340";//260966220499//260966220082 //260963621441
-    private static String USSDString = "*677#";//111254597//11114982
+    private static String MSISDN = "260977533618";//260977533618
+    private static String USSDString = "*677#";
+
 
     public static void main(String[] args) {
         AppConfigHelper config = new AppConfigHelper();

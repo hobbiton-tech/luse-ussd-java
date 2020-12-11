@@ -5,7 +5,7 @@ import LuseDma.ussd.pojos.FormSession;
 import LuseDma.ussd.pojos.ListItem;
 import LuseDma.ussd.pojos.luse.Security;
 import LuseDma.ussd.pojos.luse.SecurityOrder;
-import org.json.JSONObject;
+import org.json.simple.JSONObject;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
@@ -33,23 +33,33 @@ public class SecurityExploreView {
                 security = "Commodities";
                 break;
         }
-        String view = security + " Market:Press;" + this.newLine;
-        if (action) {
-            view = view + "Invalid option." + this.newLine;
-        }
-        view = view + "1. Search" + this.newLine;
-        view = view + "2. Explore" + this.newLine;
-        view = view + AppConfigHelper.getGoBackText();
-        return view;
-    }
-
-    public String getSearchMenu(boolean action, String security) {
         String view = security + " Market:Press" + this.newLine;
         if (action) {
             view = view + "Invalid option." + this.newLine;
         }
-        view = view + "Enter first letter of security" + this.newLine;
+//        view = view + "1. Search" + this.newLine;
+        view = view + "1. Explore" + this.newLine;
         view = view + AppConfigHelper.getGoBackText();
+        return view;
+    }
+
+    public String getSearchMenu(String securityType, boolean action) {
+        String view = "";
+        switch (securityType) {
+            case "CS":
+                view = view + "Stocks Market:Press" + this.newLine;
+                break;
+            case "CORP":
+                view = view + "Bonds Market:Press" + this.newLine;
+                break;
+            case "CASH":
+                view = view + "Commodities Market:Press" + this.newLine;
+                break;
+        }
+        if (action) {
+            view = view + "Invalid input entered." + this.newLine;
+        }
+        view = view + "Enter first letter of security" + this.newLine;
         return view;
     }
 
@@ -69,42 +79,73 @@ public class SecurityExploreView {
         return view;
     }
 
-    public String getSecurityDetailsHeader(String securityType, Security security, boolean isError) {
+    public String securityOptionsHeader(String securityType, Security security) {
         String view = "";
-        String currency = AppConfigHelper.parseNull(security.getCurrency());
-        DecimalFormat df = new DecimalFormat(".##");
-        LocalDate date = null;
-        if (isError) {
-            view = view + "Invalid option." + this.newLine;
+
+        switch (securityType) {
+            case "CS":
+                view = view + security.getName() + ":press" + this.newLine;
+                break;
+            case "CORP":
+                view = view + security.getCsdId() + ":press" + this.newLine;
+                break;
+            case "CASH":
+                view = view + security.getSecurityCode() + ":press" + this.newLine;
+                break;
         }
+        return view;
+    }
+
+    public String securityDetailsHeader(String securityType, Security security) {
+        String view = "";
+
+        switch (securityType) {
+            case "CS":
+                view = view + "Stock:"+security.getName() + this.newLine;
+                break;
+            case "CORP":
+                view = view + "Bond:"+security.getCsdId() + this.newLine;
+                break;
+            case "CASH":
+                view = view + "Commodity:"+security.getSecurityCode()+ this.newLine;
+                break;
+        }
+        return view;
+    }
+
+    public ArrayList<ListItem> securityDetails(String securityType, Security security) {
+
+        ListItem item;
+        DecimalFormat df = new DecimalFormat(".##");
+        String currency = AppConfigHelper.parseNull(security.getCurrency());
         if (currency.equals("ZMK")) {
             currency = "ZMW";
         }
+
+        ArrayList<ListItem> view = new ArrayList<>();
         switch (securityType) {
             case "CS":
-//                view = view + "Stock Market Details:" + this.newLine;
-                view = view + "Name:" + AppConfigHelper.parseNull(security.getName()) + this.newLine;
-                view = view + "code:" + AppConfigHelper.parseNull(security.getSecurityCode()) + this.newLine;
-                view = view + "Price:" + currency + df.format(Double.parseDouble(AppConfigHelper.parseNull(security.getClosingPrice()))) + this.newLine;
-                view = view + "Issue Date:"+date.parse(AppConfigHelper.parseNull(security.getIssueDate()), DateTimeFormatter.BASIC_ISO_DATE)+this.newLine;
+            case "CASH":
+                item = new ListItem("securityCode", AppConfigHelper.parseNull(security.getSecurityCode()));
+                view.add(item);
+                item = new ListItem("Symbol", AppConfigHelper.parseNull(security.getSymbol()));
+                view.add(item);
                 break;
             case "CORP":
-//                view = view + "Bond Market Details:" + this.newLine;
-                view = view + "ISIN:" + AppConfigHelper.parseNull(security.getCsdId()) + this.newLine;
-//                view = view + "Symbol:" + AppConfigHelper.parseNull(security.getSymbol()) + this.newLine;
-                view = view + "Price:" + currency + df.format(Double.parseDouble(AppConfigHelper.parseNull(security.getClosingPrice()))) + this.newLine;
-                view = view + "Coupon Rate:%"+AppConfigHelper.parseNull(security.getCouponRate())+this.newLine;
-//                view = view + "Issue Date:"+date.parse(AppConfigHelper.parseNull(security.getIssueDate()), DateTimeFormatter.BASIC_ISO_DATE)+this.newLine;
-                view = view + "Maturity Date:"+date.parse(AppConfigHelper.parseNull(security.getMaturityDate()), DateTimeFormatter.BASIC_ISO_DATE)+this.newLine;
-                break;
-            case "CASH":
-//                view = view + "Commodity Market Details:" + this.newLine;
-                view = view + "code:" + AppConfigHelper.parseNull(security.getSecurityCode()) + this.newLine;
-                view = view + "Symbol:" + AppConfigHelper.parseNull(security.getSymbol()) + this.newLine;
-                view = view + "Price:" + currency + df.format(Double.parseDouble(AppConfigHelper.parseNull(security.getClosingPrice()))) + this.newLine;
-                view = view + "Issue Date:"+date.parse(AppConfigHelper.parseNull(security.getIssueDate()), DateTimeFormatter.BASIC_ISO_DATE)+this.newLine;
+                item = new ListItem("ISIN", AppConfigHelper.parseNull(security.getCsdId()));
+                view.add(item);
+                item = new ListItem("Symbol", AppConfigHelper.parseNull(security.getSymbol()));
+                view.add(item);
+                item = new ListItem("Coupon Rate", "%"+AppConfigHelper.parseNull(security.getCouponRate()));
+                view.add(item);
                 break;
         }
+        item = new ListItem("price", currency+AppConfigHelper.parseNull(df.format(Double.parseDouble(security.getClosingPrice()))));
+        view.add(item);
+        item = new ListItem("Issue Date", AppConfigHelper.parseNull(LocalDate.parse(security.getIssueDate(), DateTimeFormatter.BASIC_ISO_DATE).toString()));
+        view.add(item);
+        item = new ListItem("Maturity Date", AppConfigHelper.parseNull(LocalDate.parse(security.getMaturityDate(), DateTimeFormatter.BASIC_ISO_DATE).toString()));
+        view.add(item);
         return view;
     }
 
@@ -139,11 +180,11 @@ public class SecurityExploreView {
                 view = view + "Enter number of shares" + this.newLine;
                 break;
             case "CORP":
-                view = view + "Bond:"+security.getCsdId()+this.newLine;
+                view = view + "Bond:" + security.getCsdId() + this.newLine;
                 view = view + "Enter bond volume" + this.newLine;
                 break;
             case "CASH":
-                view = view + "Commodity:"+security.getSecurityCode()+this.newLine;
+                view = view + "Commodity:" + security.getSecurityCode() + this.newLine;
                 view = view + "Enter commodity tonnage" + this.newLine;
                 break;
         }
@@ -156,7 +197,7 @@ public class SecurityExploreView {
             view = view + "Invalid input entered" + this.newLine;
         }
         if (isCriteria) {
-            view = view + "Invalid input."+criteriaMsg+this.newLine;
+            view = view + "Invalid input." + criteriaMsg + this.newLine;
         }
         switch (securityType) {
             case "CS":
@@ -164,58 +205,67 @@ public class SecurityExploreView {
                 view = view + "Enter price per share" + this.newLine;
                 break;
             case "CORP":
-                view = view + "Bond:"+security.getCsdId()+this.newLine;
+                view = view + "Bond:" + security.getCsdId() + this.newLine;
                 view = view + "Enter price per volume" + this.newLine;
                 break;
             case "CASH":
-                view = view + "Commodity:"+security.getSecurityCode()+this.newLine;
+                view = view + "Commodity:" + security.getSecurityCode() + this.newLine;
                 view = view + "Enter price per tonnage" + this.newLine;
                 break;
         }
         return view;
     }
 
-    public String confirmOrder(String securityType, Security security, SecurityOrder order, boolean isError) {
-        String view = "";
+    public ArrayList<ListItem> orderDetails(String securityType, Security security, SecurityOrder order) {
+
+        ListItem item;
         Double priceEntered = Double.parseDouble(AppConfigHelper.parseNull(order.getPrice()));
-        Double brokerFess = priceEntered*0.01;
-        Double luseFess = priceEntered*0.00375;
-        Double secFess = priceEntered*0.00125;
-//        System.out.println("feess => "+brokerFess+luseFess+secFess);
-        Double totalCost =priceEntered+brokerFess+luseFess+secFess;
+        Double orderPrice = priceEntered * Double.parseDouble(order.getVolume());
+        Double brokerFess = orderPrice * 0.01;
+        Double luseFess = orderPrice * 0.00375;
+        Double secFess = orderPrice * 0.00125;
+        Double totalCost = orderPrice + brokerFess + luseFess + secFess;
         String currency = AppConfigHelper.parseNull(security.getCurrency());
+        if (currency.equals("ZMK")) { currency = "ZMW"; }
         DecimalFormat df = new DecimalFormat(".##");
-        if (isError) {
-            view = view + "Invalid option." + this.newLine;
-        }
-        if (currency.equals("ZMK")) {
-            currency = "ZMW";
-        }
-        switch (securityType) {
+        String priceText = "";
+
+        ArrayList<ListItem> view = new ArrayList<>();
+        switch (securityType){
             case "CS":
-                view = view + "Stock:" + security.getName() + this.newLine;
-                view = view + "Shares: " + order.getVolume() + this.newLine;
-                view = view + "Price per share: " + df.format(Double.parseDouble(order.getPrice()))+ this.newLine;
-                view = view + "Total Cost:"+ currency + df.format(totalCost * Double.parseDouble(order.getVolume()))+this.newLine;
+                item = new ListItem("Shares", AppConfigHelper.parseNull(order.getVolume()));
+                view.add(item);
+                priceText = "Price per share";
                 break;
             case "CORP":
-                view = view + "Bond:"+security.getCsdId()+ this.newLine;
-                view = view + "Volume:"+order.getVolume()+this.newLine;
-                view = view + "Price per volume:"+df.format(Double.parseDouble(order.getPrice()))+this.newLine;
-                view = view + "Total Cost:"+currency  + df.format(totalCost)+this.newLine;
+                item = new ListItem("Volume", AppConfigHelper.parseNull(order.getVolume()));
+                view.add(item);
+                priceText = "Price per volume";
                 break;
             case "CASH":
-                view = view + "Commodity:"+security.getSecurityCode()+ this.newLine;
-                view = view + "Tonnage:"+order.getVolume()+this.newLine;
-                view = view + "Price per tonnage:"+df.format(Double.parseDouble(order.getPrice()))+this.newLine;
-                view = view + "Total Cost:"+currency  + df.format(totalCost)+this.newLine;
+                item = new ListItem("Tonnage", AppConfigHelper.parseNull(order.getVolume()));
+                view.add(item);
+                priceText = "Price per tonnage";
                 break;
         }
+        item = new ListItem(priceText, currency+AppConfigHelper.parseNull(df.format(Double.parseDouble(order.getPrice()))));
+        view.add(item);
+        item = new ListItem("Luse Fees", currency+df.format(luseFess));
+        view.add(item);
+        item = new ListItem("Sec Fees", currency+df.format(secFess));
+        view.add(item);
+        item = new ListItem("Broker Fees", currency+df.format(brokerFess));
+        view.add(item);
+        item = new ListItem("Purchase total", currency+df.format(orderPrice));
+        view.add(item);
+        item = new ListItem("Transaction Fees", currency+df.format(totalCost));
+        view.add(item);
+
         return view;
     }
 
     public String securityOrderResponse() {
-        String view ="";
+        String view = "";
         view = view + "Your order is being processed you will receive an sms response soon." + this.newLine;
         return view;
     }

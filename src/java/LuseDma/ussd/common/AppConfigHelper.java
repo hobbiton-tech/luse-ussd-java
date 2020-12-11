@@ -74,8 +74,8 @@
    public static String LUSEDMA_BASE_URL = "http://41.175.23.42:8484/api/v1";
    public static  String LUSEDMA_WEBSOCKET_URL = "ws://41.175.23.42:8484/api/v1/websocket";
    public static String SMS_GATEWAY_URL = "http://41.175.8.69:8282/mtnSMSC/index.php";
-   public static String LUSEDMA_ACCESS_TOKEN = "FN-x-Ii4ZYCOSgclOGjyq79XtXggd9Wb7NaRzZ28WTroEnomzVix6QoCO3YDCNUFc94PWZqijmTL1_Fw";
-   public static String LUSE_CLIENT_ID = "5f7f02e0fab6050a730c5ee1";
+   public static String LUSEDMA_ACCESS_TOKEN = "4K8m_-KO_2jHyGtKuvNqpvg5pkGICVsC5NxIxwTtAWSdNbVd4djFeGo7r8hxJbVgp2UsDlnyEyG_MMbL";
+   public static String LUSE_CLIENT_ID = "5f7495f348678628a6b4d2c0";
 
    public static String USSD_SESSIONS_COLLECTION = "ussd_sessions";
    public static String SUBSCRIBERS_COLLECTION = "subscribers";

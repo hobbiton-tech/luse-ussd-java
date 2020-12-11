@@ -1,5 +1,6 @@
 package LuseDma.ussd.handlers;
 
+import LuseDma.ussd.helpers.DetailPaginationHelper;
 import LuseDma.ussd.helpers.PaginationHelper;
 import LuseDma.ussd.models.luse.ClientModel;
 import LuseDma.ussd.models.luse.SecurityModel;
@@ -14,6 +15,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import java.io.FileNotFoundException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -28,13 +30,15 @@ public class SecuritiesListHandler {
     private SecurityModel securityModel = null;
     private ArrayList<ListItem> listitems = null;
     private String header = null;
-    private Map<String, Object> securityForm, buyForm;
+    private Map<String, Object> securityForm, buyForm, optionSelectedForm, searchForm;
     private String securityType;
     private Security securitySelected;
     private JSONObject selected;
     private String msisdn;
     private String securityFilter;
     private String buyOrSell;
+    private String optionSelectedFormName = "optionSelectedForm";
+    private String searchFormName = "search_form";
 
 
     private SecurityExploreView view = new SecurityExploreView();
@@ -47,20 +51,22 @@ public class SecuritiesListHandler {
         this.formsession = ussdsession.getMobileSession().getFormSession();
         this.securityForm = this.mobilesession.getFormSession().getForm(FORM_NAME);
         this.buyForm = this.mobilesession.getFormSession().getForm(this.securityType);
+        this.optionSelectedForm = this.mobilesession.getFormSession().getForm(this.optionSelectedFormName);
         this.securityModel = new SecurityModel(this.ussdsession.getUSSDSessionHelper().getMongoDB());
+        this.searchForm = this.mobilesession.getFormSession().getForm(this.searchFormName);
         this.securityFilter = securityFilter;
         this.buyOrSell = buyOrSell;
     }
 
 
     public USSDResponse runSession() throws FileNotFoundException {
+        System.out.println("run method session level ==> " + this.ussdsession.getSessionLevel());
         if (this.ussdsession.getSessionLevel() < (handlersessionlevel + 2)) {
+
             JSONArray securityList = LuseServiceCenter.getSecurityList(this.securityType, this.securityFilter);
             this.header = this.view.getSecuritiesListHeader(this.securityType);
             this.listitems = getSecuritiesList(securityList);
             PaginationHelper paginationHelper = null;
-
-            System.out.println("run method session level ==> " + this.ussdsession.getSessionLevel());
 
             switch (this.ussdsession.getSessionLevel()) {
                 case handlersessionlevel:
@@ -75,7 +81,7 @@ public class SecuritiesListHandler {
                         case 1:
                             this.selected = getSelectedItem(Integer.parseInt(this.ussdsession.getUserInput()) - 1, securityList);
 
-                            System.out.println("selected security ==> "+this.selected);
+                            System.out.println("selected security ==> " + this.selected);
 
                             this.setSecurityFormParametersAndSave();
 
@@ -83,25 +89,25 @@ public class SecuritiesListHandler {
                             this.ussdsession.saveUSSDSession(handlersessionlevel + 2);
                             this.ussdsession.saveSessionMode(1);
 
-                            return this.securityDetails((String) this.securityForm.get("csdId"));
+                            return this.securityOptionSelector((String) this.securityForm.get("csdId"));
                     }
                     this.ussdsession.saveSessionMode(1);
                     return this.ussdsession.buildUSSDResponse(paginationHelper.getListPage(), 2);
             }
-            return this.securityDetails((String) this.securityForm.get("csdId"));
+            return this.securityOptionSelector((String) this.securityForm.get("csdId"));
         }
-        return this.securityDetails((String) this.securityForm.get("csdId"));
+        return this.securityOptionSelector((String) this.securityForm.get("csdId"));
     }
 
-    public USSDResponse securityDetails(String csdId) throws FileNotFoundException {
+    public USSDResponse securityOptionSelector(String csdId) throws FileNotFoundException {
+        System.out.println("securityOptionSelector method session level ==> " + this.ussdsession.getSessionLevel());
         this.securitySelected = this.securityModel.findOne(csdId);
-        if (this.ussdsession.getSessionLevel() < (handlersessionlevel + 4)) {
-            this.header = this.view.getSecurityDetailsHeader(this.securityType, this.securitySelected, false);
-            JSONArray buyOptions = LuseServiceCenter.proceedOption();
-            this.listitems = this.getOptions(buyOptions);
-            PaginationHelper paginationHelper = null;
+        if (this.ussdsession.getSessionLevel() < handlersessionlevel + 4) {
 
-            System.out.println("security details session level ==> " + this.ussdsession.getSessionLevel());
+            JSONArray optionSelectors = LuseServiceCenter.optionSelectors("securityDetails", this.buyOrSell);
+            this.header = this.view.securityOptionsHeader(this.securityType, this.securitySelected);
+            this.listitems = getOptions(optionSelectors);
+            PaginationHelper paginationHelper = null;
 
             switch (this.ussdsession.getSessionLevel()) {
                 case handlersessionlevel + 2:
@@ -114,20 +120,60 @@ public class SecuritiesListHandler {
                     paginationHelper = new PaginationHelper(this.ussdsession, this.listitems, this.header, false, false, "Sorry no information found.");
                     switch (paginationHelper.getListPageActionHandle()) {
                         case 1:
-                            this.selected = getSelectedItem(Integer.parseInt(this.ussdsession.getUserInput()) - 1, buyOptions);
+                            this.selected = getSelectedItem(Integer.parseInt(this.ussdsession.getUserInput()) - 1, optionSelectors);
                             switch ((String) this.selected.get("id")) {
                                 case "1":
                                     this.ussdsession.resetList();
                                     this.ussdsession.saveSessionMode(1);
                                     this.ussdsession.saveUSSDSession(handlersessionlevel + 4);
-                                    return this.clientBrokers();
+
+                                    this.optionSelectedForm.put("action", "viewSecurityDetails");
+                                    this.formsession.getFormData().put(this.optionSelectedFormName, optionSelectedForm);
+                                    this.ussdsession.saveFormSession(this.formsession);
+
+                                    return this.securityDetails(this.optionSelectedForm.get("action").toString());
+                                case "2":
+                                    this.ussdsession.resetList();
+                                    this.ussdsession.saveSessionMode(1);
+                                    this.ussdsession.saveUSSDSession(handlersessionlevel + 4);
+
+                                    this.optionSelectedForm.put("action", "");
+                                    this.formsession.getFormData().put(this.optionSelectedFormName, optionSelectedForm);
+                                    this.ussdsession.saveFormSession(this.formsession);
+
+                                    return this.securityDetails(this.optionSelectedForm.get("action").toString());
                             }
                             break;
                     }
                     this.ussdsession.saveSessionMode(1);
                     return this.ussdsession.buildUSSDResponse(paginationHelper.getListPage(), 2);
             }
-            return this.clientBrokers();
+        }
+        return this.securityDetails(this.optionSelectedForm.get("action").toString());
+    }
+
+    public USSDResponse securityDetails(String action) throws FileNotFoundException {
+        System.out.println("securityDetails method session level ==> " + this.ussdsession.getSessionLevel());
+        if (action.equals("viewSecurityDetails")) {
+
+            this.header = this.view.securityDetailsHeader(this.securityType, this.securitySelected);
+            this.listitems = this.view.securityDetails(this.securityType, this.securitySelected);
+
+            DetailPaginationHelper paginationHelper = null;
+            switch (this.ussdsession.getSessionLevel()) {
+                case handlersessionlevel + 4:
+                    this.ussdsession.resetList();
+                    this.ussdsession.saveUSSDSession(handlersessionlevel + 5);
+                    this.ussdsession.saveSessionMode(1);
+                    paginationHelper = new DetailPaginationHelper(this.ussdsession, this.listitems, this.header, "", "Sorry no information found.");
+                    return this.ussdsession.buildUSSDResponse(paginationHelper.getListPage(), 2);
+                case handlersessionlevel + 5:
+                    paginationHelper = new DetailPaginationHelper(this.ussdsession, this.listitems, this.header, "", "Sorry no information found.");
+                    switch (paginationHelper.getListPageActionHandle()) {
+                    }
+                    this.ussdsession.saveSessionMode(1);
+                    return this.ussdsession.buildUSSDResponse(paginationHelper.getListPage(), 2);
+            }
         }
         return this.clientBrokers();
     }
@@ -219,11 +265,12 @@ public class SecuritiesListHandler {
                                 double maxPrice = (securityPrice + criteria);
                                 if (price < minPrice || price > maxPrice) {
                                     String criteriaMsg = "";
+                                    DecimalFormat df = new DecimalFormat(".##");
                                     if (price < minPrice) {
-                                        criteriaMsg = "Price cannot be lower than " + minPrice;
+                                        criteriaMsg = "Price cannot be lower than " + df.format(minPrice);
                                     }
                                     if (price > maxPrice) {
-                                        criteriaMsg = "Price cannot be greater than " + maxPrice;
+                                        criteriaMsg = "Price cannot be greater than " + df.format(maxPrice);
                                     }
                                     this.ussdsession.saveSessionMode(1);
                                     return this.ussdsession.buildUSSDResponse(this.view.securityPrice(this.securityType, this.securitySelected, false, true, criteriaMsg), 2);
@@ -233,24 +280,25 @@ public class SecuritiesListHandler {
                         this.addFieldtoBuyFormAndSave("price", priceEntered);
                         this.ussdsession.saveSessionMode(1);
                         this.ussdsession.saveUSSDSession(handlersessionlevel + 10);
-                        return this.orderConfirm();
+                        return this.orderOptionsSelector();
                     }
                     this.ussdsession.saveSessionMode(1);
                     return this.ussdsession.buildUSSDResponse(this.view.securityPrice(this.securityType, this.securitySelected, true, false, ""), 2);
             }
-            return orderConfirm();
+            return orderOptionsSelector();
         }
-        return orderConfirm();
+        return orderOptionsSelector();
     }
 
-    public USSDResponse orderConfirm() throws FileNotFoundException {
-        System.out.println("orderConfirm session level ==> " + this.ussdsession.getSessionLevel());
-        SecurityOrder order = this.saveSecurityOrder();
+    public USSDResponse orderOptionsSelector() throws FileNotFoundException {
+        System.out.println("orderOptionsSelector method session level ==> " + this.ussdsession.getSessionLevel());
         if (this.ussdsession.getSessionLevel() < handlersessionlevel + 12) {
-            this.header = this.view.confirmOrder(this.securityType, this.securitySelected, order, false);
-            JSONArray confirmOption = LuseServiceCenter.confirmOption();
-            this.listitems = this.getOptions(confirmOption);
+
+            JSONArray optionSelectors = LuseServiceCenter.optionSelectors("orderDetails", this.buyOrSell);
+            this.header = this.view.securityOptionsHeader(this.securityType, this.securitySelected);
+            this.listitems = getOptions(optionSelectors);
             PaginationHelper paginationHelper = null;
+
             switch (this.ussdsession.getSessionLevel()) {
                 case handlersessionlevel + 10:
                     paginationHelper = new PaginationHelper(this.ussdsession, this.listitems, this.header, false, false, "Sorry no information found.");
@@ -262,15 +310,57 @@ public class SecuritiesListHandler {
                     paginationHelper = new PaginationHelper(this.ussdsession, this.listitems, this.header, false, false, "Sorry no information found.");
                     switch (paginationHelper.getListPageActionHandle()) {
                         case 1:
-                            this.selected = getSelectedItem(Integer.parseInt(this.ussdsession.getUserInput()) - 1, confirmOption);
+                            this.selected = getSelectedItem(Integer.parseInt(this.ussdsession.getUserInput()) - 1, optionSelectors);
                             switch ((String) this.selected.get("id")) {
                                 case "1":
                                     this.ussdsession.resetList();
                                     this.ussdsession.saveSessionMode(1);
                                     this.ussdsession.saveUSSDSession(handlersessionlevel + 12);
-                                    return this.proccessOrder(order);
+
+                                    this.optionSelectedForm.put("action", "viewOrderDetails");
+                                    this.formsession.getFormData().put(this.optionSelectedFormName, optionSelectedForm);
+                                    this.ussdsession.saveFormSession(this.formsession);
+
+                                    return this.orderDetails(this.optionSelectedForm.get("action").toString());
+                                case "2":
+                                    this.ussdsession.resetList();
+                                    this.ussdsession.saveSessionMode(1);
+                                    this.ussdsession.saveUSSDSession(handlersessionlevel + 12);
+
+                                    this.optionSelectedForm.put("action", "");
+                                    this.formsession.getFormData().put(this.optionSelectedFormName, optionSelectedForm);
+                                    this.ussdsession.saveFormSession(this.formsession);
+
+                                    return this.orderDetails(this.optionSelectedForm.get("action").toString());
                             }
                             break;
+                    }
+                    this.ussdsession.saveSessionMode(1);
+                    return this.ussdsession.buildUSSDResponse(paginationHelper.getListPage(), 2);
+            }
+        }
+        return this.orderDetails(this.optionSelectedForm.get("action").toString());
+    }
+
+    public USSDResponse orderDetails(String action) throws FileNotFoundException {
+        System.out.println("orderDetails method session level ==> " + this.ussdsession.getSessionLevel());
+        SecurityOrder order = this.saveSecurityOrder();
+        if (action.equals("viewOrderDetails")) {
+
+            this.header = this.view.securityDetailsHeader(this.securityType, this.securitySelected);
+            this.listitems = this.view.orderDetails(this.securityType, this.securitySelected, order);
+
+            DetailPaginationHelper paginationHelper = null;
+            switch (this.ussdsession.getSessionLevel()) {
+                case handlersessionlevel + 12:
+                    this.ussdsession.resetList();
+                    this.ussdsession.saveUSSDSession(handlersessionlevel + 13);
+                    this.ussdsession.saveSessionMode(1);
+                    paginationHelper = new DetailPaginationHelper(this.ussdsession, this.listitems, this.header, "", "Sorry no information found.");
+                    return this.ussdsession.buildUSSDResponse(paginationHelper.getListPage(), 2);
+                case handlersessionlevel + 13:
+                    paginationHelper = new DetailPaginationHelper(this.ussdsession, this.listitems, this.header, "", "Sorry no information found.");
+                    switch (paginationHelper.getListPageActionHandle()) {
                     }
                     this.ussdsession.saveSessionMode(1);
                     return this.ussdsession.buildUSSDResponse(paginationHelper.getListPage(), 2);
@@ -300,15 +390,22 @@ public class SecuritiesListHandler {
 
                 this.ussdsession.saveUSSDSession(-1);
                 this.ussdsession.saveSessionMode(0);
+                this.ussdsession.clearOptions();
+                this.formsession.clearFormData(this.optionSelectedFormName);
+                this.formsession.clearFormData(FORM_NAME);
+                this.formsession.clearFormData(this.securityType);
                 LuseServiceCenter.orderSecurity(payload, this.ussdsession.getUSSDSessionHelper().getMongoDB(), this.mobilesession.getMSISDN());
                 return this.ussdsession.buildUSSDResponse(this.view.securityOrderResponse(), 2);
             default:
                 this.ussdsession.saveUSSDSession(-1);
                 this.ussdsession.saveSessionMode(0);
+                this.ussdsession.clearOptions();
+                this.formsession.clearFormData(this.optionSelectedFormName);
+                this.formsession.clearFormData(FORM_NAME);
+                this.formsession.clearFormData(this.securityType);
                 return this.ussdsession.buildUSSDResponse(this.view.securityOrderResponse(), 2);
         }
     }
-
 
     //    Miscellaneous functions
     public void setSecurityFormParametersAndSave() throws FileNotFoundException {
@@ -474,7 +571,6 @@ public class SecuritiesListHandler {
         }
         return list;
     }
-
 
     public ArrayList<ListItem> getClientBrokerList(JSONArray items) {
         ArrayList<ListItem> list = new ArrayList<>();

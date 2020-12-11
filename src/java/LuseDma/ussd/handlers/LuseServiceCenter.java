@@ -58,7 +58,7 @@ public class LuseServiceCenter {
     // make http request
     public static JSONObject makeHttpRequest(String endPont, String payload, String urlPath) {
         JSONObject parsedResponse = null;
-        if(urlPath == ""){
+        if (urlPath == "") {
             urlPath = AppConfigHelper.LUSEDMA_BASE_URL + endPont;
         }
 //        System.out.println("url path ==> "+urlPath);
@@ -93,39 +93,38 @@ public class LuseServiceCenter {
         JSONArray dataArrayFilter = new JSONArray();
         JSONArray finalDataArray = new JSONArray();
 
-        System.out.println("filter value ==> "+securityFilter);
+        System.out.println("filter value ==> " + securityFilter);
 
-        if(securityFilter != ""){
+        if (securityFilter != "") {
             System.out.println("security filter not null");
-            for (int i = 0; i < dataArray.size(); i++){
+            for (int i = 0; i < dataArray.size(); i++) {
                 JSONObject dataObj = (JSONObject) dataArray.get(i);
 
                 String securityTypeFilter = dataObj.getOrDefault("securityType", "").toString();
                 String securityCodeFilter = dataObj.getOrDefault("securityCode", "").toString();
                 String secuirtyCsdId = dataObj.getOrDefault("csdId", "").toString();
 
-                switch(securityTypeFilter){
+                switch (securityTypeFilter) {
                     case "CORP":
-                        if(secuirtyCsdId.startsWith(securityFilter)){
+                        if (secuirtyCsdId.startsWith(securityFilter)) {
                             dataArrayFilter.add(dataObj);
                         }
                         break;
                     default:
-                        if(securityCodeFilter.startsWith(securityFilter)){
+                        if (securityCodeFilter.startsWith(securityFilter)) {
                             dataArrayFilter.add(dataObj);
                         }
                         break;
                 }
             }
             finalDataArray = dataArrayFilter;
-        }
-        else{
+        } else {
             finalDataArray = dataArray;
         }
 
 
-        System.out.println("filtered array ==> "+dataArrayFilter);
-        System.out.println("final data array ==> "+finalDataArray);
+        System.out.println("filtered array ==> " + dataArrayFilter);
+        System.out.println("final data array ==> " + finalDataArray);
 
         for (int i = 0; i < finalDataArray.size(); i++) {
             JSONObject tempObj = new JSONObject();
@@ -183,149 +182,162 @@ public class LuseServiceCenter {
     }
 
     //confirm option
-    public static JSONArray bondCalculatorOptions() {
+    public static JSONArray optionSelectors(String action, String buyOrSell) {
         JSONArray data = new JSONArray();
-        try {
-            JSONObject o = new JSONObject();
-            o.put("id", "1");
-            o.put("option", "Yield");
-            data.add(0,o);
+        JSONObject o = new JSONObject();
+        JSONObject o2 = new JSONObject();
+        String securityAction = "Buy";
+        if(buyOrSell.equals("2")){securityAction = "Sell";}
+        switch (action) {
+            case "securityDetails":
+                o.put("id", "1");
+                o.put("option", "View Details");
+                data.add(0, o);
 
-            JSONObject o2 = new JSONObject();
-            o2.put("id", "2");
-            o2.put("option", "price");
-            data.add(1,o2);
 
-        } catch (Exception e) {
+                o2.put("id", "2");
+                o2.put("option", securityAction);
+                data.add(1, o2);
+                break;
+            case "orderDetails":
+                o.put("id", "1");
+                o.put("option", "Order Details");
+                data.add(0, o);
+
+                o2.put("id", "2");
+                o2.put("option", "Confirm "+securityAction);
+                data.add(1, o2);
+                break;
         }
+
         return data;
     }
 
-    //    get client information
-    public static JSONArray clientInformation(String action) {
-        System.out.println("clientInformation function");
-        JSONArray dataCollectionArray = new JSONArray();
+        //    get client information
+        public static JSONArray clientInformation (String action){
+            System.out.println("clientInformation function");
+            JSONArray dataCollectionArray = new JSONArray();
 
-        String url = "/subscribers/find-one";
-        String payload = "{\"id\":\"" + AppConfigHelper.LUSE_CLIENT_ID + "\"}";
+            String url = "/subscribers/find-one";
+            String payload = "{\"id\":\"" + AppConfigHelper.LUSE_CLIENT_ID + "\"}";
 
-        JSONObject parsedResObj = makeHttpRequest(url, payload, "");
-        JSONObject clientObj = (JSONObject) parsedResObj;
-        JSONObject paylaod = (JSONObject) clientObj.get("payload");
+            JSONObject parsedResObj = makeHttpRequest(url, payload, "");
+            JSONObject clientObj = (JSONObject) parsedResObj;
+            JSONObject paylaod = (JSONObject) clientObj.get("payload");
 
-        switch (action) {
-            case "brokers":
-                JSONArray atsAccounts = (JSONArray) paylaod.get("atsAccounts");
-                for (int i = 0; i < atsAccounts.size(); i++) {
-                    JSONObject brokersObj = (JSONObject) atsAccounts.get(i);
-                    JSONObject broker = new JSONObject();
-                    broker.put("brokerId", brokersObj.get("brokerId"));
-                    broker.put("atsId", brokersObj.get("atsId"));
-                    dataCollectionArray.add(i, broker);
-                }
-                break;
+            switch (action) {
+                case "brokers":
+                    JSONArray atsAccounts = (JSONArray) paylaod.get("atsAccounts");
+                    for (int i = 0; i < atsAccounts.size(); i++) {
+                        JSONObject brokersObj = (JSONObject) atsAccounts.get(i);
+                        JSONObject broker = new JSONObject();
+                        broker.put("brokerId", brokersObj.get("brokerId"));
+                        broker.put("atsId", brokersObj.get("atsId"));
+                        dataCollectionArray.add(i, broker);
+                    }
+                    break;
+            }
+            return dataCollectionArray;
         }
-        return dataCollectionArray;
-    }
 
-    // save client
-    public static void saveClient(MongoDBOld DbConnection, String msisdn, String clientId) {
-        System.out.println("saving user");
-        String url = "/subscribers/find-one";
-        String payload = "{\"id\":\"" + clientId + "\"}";
+        // save client
+        public static void saveClient (MongoDBOld DbConnection, String msisdn, String clientId){
+            System.out.println("saving user");
+            String url = "/subscribers/find-one";
+            String payload = "{\"id\":\"" + clientId + "\"}";
 
-        JSONObject parsedResObj = makeHttpRequest(url, payload, "");
-        JSONObject clientObj = (JSONObject) parsedResObj;
-        JSONObject payloadObj = (JSONObject) clientObj.get("payload");
-        JSONArray atsAccountsArray = (JSONArray)payloadObj.get("atsAccounts");
-        JSONObject atsAccountsObjIndex0 = (JSONObject)atsAccountsArray.get(0);
+            JSONObject parsedResObj = makeHttpRequest(url, payload, "");
+            JSONObject clientObj = (JSONObject) parsedResObj;
+            JSONObject payloadObj = (JSONObject) clientObj.get("payload");
+            JSONArray atsAccountsArray = (JSONArray) payloadObj.get("atsAccounts");
+            JSONObject atsAccountsObjIndex0 = (JSONObject) atsAccountsArray.get(0);
 
 
-        Client client = new Client();
-        ClientModel clientModel = new ClientModel(DbConnection);
+            Client client = new Client();
+            ClientModel clientModel = new ClientModel(DbConnection);
 
-        client.setId((String) payloadObj.getOrDefault("id", ""));
-        client.setCsdId((String) payloadObj.getOrDefault("csdId", ""));
-        client.setWalletBalance(String.valueOf(parsedResObj.getOrDefault("walletBalance", "").toString()));
-        client.setAccessToken((String) payloadObj.getOrDefault("accessToken", ""));
-        client.setFullname((String) payloadObj.getOrDefault("fullname", ""));
-        client.setAtsAccountsAtsId(atsAccountsObjIndex0.getOrDefault("atsId", "").toString());
-        client.setAtsAccountsBrokerId(atsAccountsObjIndex0.getOrDefault("brokerId", "").toString());
-        client.setMsisdn(msisdn);
+            client.setId((String) payloadObj.getOrDefault("id", ""));
+            client.setCsdId((String) payloadObj.getOrDefault("csdId", ""));
+            client.setWalletBalance(String.valueOf(parsedResObj.getOrDefault("walletBalance", "").toString()));
+            client.setAccessToken((String) payloadObj.getOrDefault("accessToken", ""));
+            client.setFullname((String) payloadObj.getOrDefault("fullname", ""));
+            client.setAtsAccountsAtsId(atsAccountsObjIndex0.getOrDefault("atsId", "").toString());
+            client.setAtsAccountsBrokerId(atsAccountsObjIndex0.getOrDefault("brokerId", "").toString());
+            client.setMsisdn(msisdn);
 
-        Boolean result = clientModel.save(client);
-        System.out.println("user save status ==> " + result);
-    }
-
-    // buy security
-    public static void orderSecurity(JSONObject payload, MongoDBOld mongodb, String msisdn) {
-        System.out.println("payload recieved==> " + payload);
-        SockJsSpringClient client = new SockJsSpringClient();
-        client.connectWebsocket("orderSecurity", payload, mongodb, msisdn);
-    }
-
-    //    get client information
-    public static void sendSMS(String msisdn, String message) {
-        System.out.println("sending sms");
-
-        String url = AppConfigHelper.SMS_GATEWAY_URL;
-        String payload = "{\"MSISDN\":\"" + msisdn + "\", \"message\":\""+message+"\"}";
-        System.out.println("payload sent ==> "+payload);
-
-        makeHttpRequest("", payload, url);
-        System.out.println("SMS sent");
-    }
-
-    // bonds calculator
-    public static JSONObject bondsCalculator(JSONObject bondPricePayload){
-        String url = "/securities/bond-calculator";
-        String payload = "{\"csdId\":\""+bondPricePayload.get("csdId").toString()+"\", \"yield\":"+0.1+",\"price\":"+Double.parseDouble(bondPricePayload.get("price").toString())+"}";
-        System.out.println("bond payload sent ==> "+payload);
-
-        JSONObject parsedObj = makeHttpRequest(url, payload, "");
-        JSONObject requestRes = (JSONObject) parsedObj.get("payload");
-        JSONObject payloadRes = (JSONObject) requestRes;
-
-        System.out.println("response ==> "+parsedObj);
-
-        JSONObject result = new JSONObject();
-        result.put("cleanPrice", payloadRes.getOrDefault("cleanPrice", "").toString());
-        result.put("currentPrice", payloadRes.getOrDefault("currentPrice", "").toString());
-        result.put("currentYieldToMaturity", payloadRes.getOrDefault("currentYieldToMaturity", "").toString());
-
-        return result;
-    }
-
-    // fund wallet
-    public static void fundWallet(JSONObject payload, MongoDBOld mongodb, String msisdn) {
-        System.out.println("payload recieved==> " + payload);
-        SockJsSpringClient client = new SockJsSpringClient();
-        client.connectWebsocket("fundAccount", payload, mongodb, msisdn);
-    }
-
-    //get portfolio
-    public static JSONArray getClientPorfolio(String subscriberId, String csdId) {
-        JSONArray dataCollectionArray = new JSONArray();
-        String url = "/subscribers/holdings";
-        String payload = "{\"subscriberId\":\""+subscriberId+"\", \"csdId\":\"" + csdId + "\"}";
-
-        JSONObject parsedResObj = makeHttpRequest(url, payload, "");
-        JSONArray dataArray = (JSONArray) parsedResObj.get("payload");
-
-
-        for (int i = 0; i < dataArray.size(); i++) {
-            JSONObject tempObj = new JSONObject();
-            JSONObject dataObj = (JSONObject) dataArray.get(i);
-
-            tempObj.put("csdId", dataObj.getOrDefault("csdId", ""));
-            tempObj.put("securityCode", dataObj.getOrDefault("securityCode", ""));
-            tempObj.put("securityName", dataObj.getOrDefault("securityName", ""));
-            tempObj.put("shortLongIndicator", dataObj.getOrDefault("shortLongIndicator", ""));
-            tempObj.put("holdingsBalance", dataObj.getOrDefault("holdingsBalance", ""));
-            tempObj.put("availableBalance", dataObj.getOrDefault("availableBalance", ""));
-            dataCollectionArray.add(tempObj);
+            Boolean result = clientModel.save(client);
+            System.out.println("user save status ==> " + result);
         }
-        return dataCollectionArray;
-    }
 
-}
+        // buy security
+        public static void orderSecurity (JSONObject payload, MongoDBOld mongodb, String msisdn){
+            System.out.println("payload recieved==> " + payload);
+            SockJsSpringClient client = new SockJsSpringClient();
+            client.connectWebsocket("orderSecurity", payload, mongodb, msisdn);
+        }
+
+        //    get client information
+        public static void sendSMS (String msisdn, String message){
+            System.out.println("sending sms");
+
+            String url = AppConfigHelper.SMS_GATEWAY_URL;
+            String payload = "{\"MSISDN\":\"" + msisdn + "\", \"message\":\"" + message + "\"}";
+            System.out.println("payload sent ==> " + payload);
+
+            makeHttpRequest("", payload, url);
+            System.out.println("SMS sent");
+        }
+
+        // bonds calculator
+        public static JSONObject bondsCalculator (JSONObject bondPricePayload){
+            String url = "/securities/bond-calculator";
+            String payload = "{\"csdId\":\"" + bondPricePayload.get("csdId").toString() + "\", \"yield\":" + 0.1 + ",\"price\":" + Double.parseDouble(bondPricePayload.get("price").toString()) + "}";
+            System.out.println("bond payload sent ==> " + payload);
+
+            JSONObject parsedObj = makeHttpRequest(url, payload, "");
+            JSONObject requestRes = (JSONObject) parsedObj.get("payload");
+            JSONObject payloadRes = (JSONObject) requestRes;
+
+            System.out.println("response ==> " + parsedObj);
+
+            JSONObject result = new JSONObject();
+            result.put("cleanPrice", payloadRes.getOrDefault("cleanPrice", "").toString());
+            result.put("currentPrice", payloadRes.getOrDefault("currentPrice", "").toString());
+            result.put("currentYieldToMaturity", payloadRes.getOrDefault("currentYieldToMaturity", "").toString());
+
+            return result;
+        }
+
+        // fund wallet
+        public static void fundWallet (JSONObject payload, MongoDBOld mongodb, String msisdn){
+            System.out.println("payload recieved==> " + payload);
+            SockJsSpringClient client = new SockJsSpringClient();
+            client.connectWebsocket("fundAccount", payload, mongodb, msisdn);
+        }
+
+        //get portfolio
+        public static JSONArray getClientPorfolio (String subscriberId, String csdId){
+            JSONArray dataCollectionArray = new JSONArray();
+            String url = "/subscribers/holdings";
+            String payload = "{\"subscriberId\":\"" + subscriberId + "\", \"csdId\":\"" + csdId + "\"}";
+
+            JSONObject parsedResObj = makeHttpRequest(url, payload, "");
+            JSONArray dataArray = (JSONArray) parsedResObj.get("payload");
+
+
+            for (int i = 0; i < dataArray.size(); i++) {
+                JSONObject tempObj = new JSONObject();
+                JSONObject dataObj = (JSONObject) dataArray.get(i);
+
+                tempObj.put("csdId", dataObj.getOrDefault("csdId", ""));
+                tempObj.put("securityCode", dataObj.getOrDefault("securityCode", ""));
+                tempObj.put("securityName", dataObj.getOrDefault("securityName", ""));
+                tempObj.put("shortLongIndicator", dataObj.getOrDefault("shortLongIndicator", ""));
+                tempObj.put("holdingsBalance", dataObj.getOrDefault("holdingsBalance", ""));
+                tempObj.put("availableBalance", dataObj.getOrDefault("availableBalance", ""));
+                dataCollectionArray.add(tempObj);
+            }
+            return dataCollectionArray;
+        }
+
+    }
