@@ -53,7 +53,8 @@ public class WebsocketSessionHandler extends StompSessionHandlerAdapter {
 
         switch (response.getCode()){
             case "99": case "8": case "0":
-                LuseServiceCenter.sendSMS(this.msisdn, response.getMessage());
+                LuseServiceCenter.sendSMS(this.msisdn, response.getMessage(),this.mongodb);
+                LuseServiceCenter.deleteUserStoredInfo(this.msisdn, this.mongodb);
                 break;
         }
 
@@ -72,6 +73,9 @@ public class WebsocketSessionHandler extends StompSessionHandlerAdapter {
                 break;
             case "fundAccount":
                 this.fundAccount(session, this.payload);
+                break;
+            case "addBroker":
+                this.addBroker(session, this.payload);
                 break;
         }
     }
@@ -102,6 +106,19 @@ public class WebsocketSessionHandler extends StompSessionHandlerAdapter {
 
         session.send("/live/wallets/deposit", new Gson().toJson(payload).getBytes());
         System.out.println("Sent to '/live/wallets/deposit' => " + payload);
+    }
+
+    private void addBroker(StompSession session, JSONObject payload) {
+        session.subscribe("/session/brokers/linkage-result", this);
+        session.subscribe("/session/validation/errors", this);
+        session.subscribe("/session/exceptions/errors", this);
+
+        System.out.println("Subscribed to /trading/order-result");
+        System.out.println("Subscribed to /session/validation/errors");
+        System.out.println("Subscribed to /session/exceptions/errors");
+
+        session.send("/live/brokers/linkage", new Gson().toJson(payload).getBytes());
+        System.out.println("Sent to '/live/brokers/linkage' => " + payload);
     }
 
 }

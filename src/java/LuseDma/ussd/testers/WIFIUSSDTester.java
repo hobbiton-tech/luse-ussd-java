@@ -19,7 +19,7 @@ public class WIFIUSSDTester {
     private static String AppID = "677";
     private static String Shortcode = "677";
     private static String SessionStatus = "1";
-    private static String MSISDN = "260977533618";//260977533618
+    private static String MSISDN = "260975000000";//260977533618
     private static String USSDString = "*677#";
 
 

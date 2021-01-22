@@ -128,6 +128,7 @@ public class FundMenuHandler {
                 LuseServiceCenter.fundWallet(payload, this.ussdsession.getUSSDSessionHelper().getMongoDB(), this.msisdn);
                 this.ussdsession.saveSessionMode(0);
                 this.ussdsession.saveUSSDSession(-1);
+                LuseServiceCenter.deleteUserStoredInfo(this.ussdsession.getMSISDN(), this.ussdsession.getUSSDSessionHelper().getMongoDB());
                 return this.ussdsession.buildUSSDResponse(this.view.fundResponse(), 2);
         }
         this.ussdsession.saveSessionMode(0);

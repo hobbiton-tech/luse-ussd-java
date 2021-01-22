@@ -63,7 +63,7 @@ public class SecuritiesListHandler {
         System.out.println("run method session level ==> " + this.ussdsession.getSessionLevel());
         if (this.ussdsession.getSessionLevel() < (handlersessionlevel + 2)) {
 
-            JSONArray securityList = LuseServiceCenter.getSecurityList(this.securityType, this.securityFilter);
+            JSONArray securityList = LuseServiceCenter.getSecurityList(this.securityType, this.securityFilter, this.ussdsession.getMSISDN(), this.ussdsession.getUSSDSessionHelper().getMongoDB());
             this.header = this.view.getSecuritiesListHeader(this.securityType);
             this.listitems = getSecuritiesList(securityList);
             PaginationHelper paginationHelper = null;
@@ -182,7 +182,7 @@ public class SecuritiesListHandler {
         if (this.ussdsession.getSessionLevel() < (handlersessionlevel + 6)) {
             this.header = this.view.stockBuyProcess(this.securitySelected, "broker", false);
 
-            JSONArray brokersList = LuseServiceCenter.clientInformation("brokers");
+            JSONArray brokersList = LuseServiceCenter.clientInformation("brokers", this.ussdsession.getMSISDN(), this.ussdsession.getUSSDSessionHelper().getMongoDB());
             this.listitems = getClientBrokerList(brokersList);
 
             System.out.println("clientBrokers session level ==> " + this.ussdsession.getSessionLevel());
@@ -403,6 +403,7 @@ public class SecuritiesListHandler {
                 this.formsession.clearFormData(this.optionSelectedFormName);
                 this.formsession.clearFormData(FORM_NAME);
                 this.formsession.clearFormData(this.securityType);
+                LuseServiceCenter.deleteUserStoredInfo(this.ussdsession.getMSISDN(), this.ussdsession.getUSSDSessionHelper().getMongoDB());
                 return this.ussdsession.buildUSSDResponse(this.view.securityOrderResponse(), 2);
         }
     }

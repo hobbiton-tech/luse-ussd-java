@@ -46,7 +46,7 @@ public class PortfolioHandler {
         System.out.println("run method session level ==> " + this.ussdsession.getSessionLevel());
         if (this.ussdsession.getSessionLevel() < (handlersessionlevel + 2)) {
             Client client = new ClientModel(this.ussdsession.getUSSDSessionHelper().getMongoDB()).findOne(this.msisdn);
-            JSONArray holdingsList = LuseServiceCenter.getClientPorfolio(client.getId(), client.getCsdId());
+            JSONArray holdingsList = LuseServiceCenter.getClientPorfolio(client.getId(), client.getCsdId(), this.ussdsession.getMSISDN(), this.ussdsession.getUSSDSessionHelper().getMongoDB());
             this.header = this.view.holdingMenuHeader();
             this.listitems = getHoldingsList(holdingsList);
             PaginationHelper paginationHelper = null;
@@ -56,10 +56,10 @@ public class PortfolioHandler {
                     this.ussdsession.resetList();
                     this.ussdsession.saveUSSDSession(handlersessionlevel + 1);
                     this.ussdsession.saveSessionMode(1);
-                    paginationHelper = new PaginationHelper(this.ussdsession, this.listitems, this.header, false, false, "Sorry no stocks found.");
+                    paginationHelper = new PaginationHelper(this.ussdsession, this.listitems, this.header, false, false, "Sorry no security holdings found.");
                     return this.ussdsession.buildUSSDResponse(paginationHelper.getListPage(), 2);
                 case handlersessionlevel + 1:
-                    paginationHelper = new PaginationHelper(this.ussdsession, this.listitems, this.header, false, false, "Sorry no stocks found.");
+                    paginationHelper = new PaginationHelper(this.ussdsession, this.listitems, this.header, false, false, "Sorry no security holdings found.");
                     switch (paginationHelper.getListPageActionHandle()) {
                         case 1:
                             this.selected = getSelectedItem(Integer.parseInt(this.ussdsession.getUserInput()) - 1, holdingsList);

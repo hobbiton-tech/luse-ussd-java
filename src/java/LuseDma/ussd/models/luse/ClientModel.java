@@ -52,5 +52,19 @@ public class ClientModel extends MongoModelOld {
         }
         return session;
     }
+
+    public Boolean delete(String msisdn) {
+        try {
+            String query = "{\"msisdn\": \"" +msisdn+ "\"}";
+            this.collection.remove(query);
+            return true;
+        } catch (OutOfMemoryError e) {
+            AppConfigHelper.logger.error("ClientModel - find(): failed to get collection " + AppConfigHelper.USSD_SESSIONS_COLLECTION + " from MongoDB server /" + AppConfigHelper.MONGO_HOST + ":" + AppConfigHelper.MONGO_PORT + "/" + AppConfigHelper.MONGO_DATABASE, e);
+            return false;
+        } catch (Exception e) {
+            AppConfigHelper.logger.error("ClientModel - find(): failed to get collection " + AppConfigHelper.USSD_SESSIONS_COLLECTION + " from MongoDB server /" + AppConfigHelper.MONGO_HOST + ":" + AppConfigHelper.MONGO_PORT + "/" + AppConfigHelper.MONGO_DATABASE, e);
+            return true;
+        }
+    }
 }
 
